@@ -483,81 +483,258 @@
         }
     }
 
-    /* ══ S5 MOON ══ */
-    let moonClicked=false,secretFound=false,hintUsed=false,secretCloudEl=null;
-    function iS5(){
-        moonClicked=false;secretFound=false;hintUsed=false;secretCloudEl=null;
-        document.getElementById('mbox').textContent='دوسي على القمر 🌙';
-        document.getElementById('msub').textContent='في السما في حاجة...';
-        document.getElementById('mhint').style.display='flex';
-        const n=document.getElementById('night');n.innerHTML='';
-        // stars
-        for(let i=0;i<55;i++){
-            const s=document.createElement('div');s.className='star-d';const sz=1+Math.random()*2.5;
-            s.style.cssText=`width:${sz}px;height:${sz}px;top:${Math.random()*100}%;left:${Math.random()*100}%;opacity:.5;--d:${2+Math.random()*4}s;--dl:${Math.random()*4}s`;
+    /* ═══════════════════════════════════
+    🌙 S5 MOON PAGE — FINAL VERSION
+ ═══════════════════════════════════ */
+
+    let moonClicked = false;
+    let secretFound = false;
+    let hintUsed = false;
+    let secretCloudEl = null;
+
+    function iS5() {
+
+        moonClicked = false;
+        secretFound = false;
+        hintUsed = false;
+        secretCloudEl = null;
+
+        document.getElementById('mbox').textContent =
+            'دوسي على القمر 🌙';
+
+        document.getElementById('msub').textContent =
+            'في السما في حاجة...';
+
+        document.getElementById('mhint').style.display = 'flex';
+
+        const n = document.getElementById('night');
+        n.innerHTML = '';
+
+        /* ⭐ STARS */
+        for (let i = 0; i < 55; i++) {
+
+            const s = document.createElement('div');
+
+            s.className = 'star-d';
+
+            const sz = 1 + Math.random() * 2.5;
+
+            s.style.cssText = `
+            width:${sz}px;
+            height:${sz}px;
+            top:${Math.random() * 100}%;
+            left:${Math.random() * 100}%;
+            opacity:.5;
+            --d:${2 + Math.random() * 4}s;
+            --dl:${Math.random() * 4}s
+        `;
+
             n.appendChild(s);
         }
-        // big clickable fake moon
-        const fm=document.createElement('div');fm.className='fake-moon';
-        fm.style.cssText='top:10%;right:10%;';fm.textContent='🌙';
-        fm.addEventListener('click',()=>{
-            if(secretFound)return;
-            moonClicked=true;
-            const msgs=['بس مش ده القمر الحقيقي دوري عليه كويس 👀','لا ده مش هو 😑 دوري تاني 🌙','حلوة بس دوري على التاني 😂'];
-            document.getElementById('mbox').textContent=msgs[Math.min((fm._c=(fm._c||0)+1)-1,msgs.length-1)];
-            fm.style.transform='scale(.9)';setTimeout(()=>fm.style.transform='',300);
+
+        /* 🌙 FAKE MOON */
+        const fm = document.createElement('div');
+
+        fm.className = 'fake-moon';
+
+        fm.style.cssText = `
+        top:10%;
+        right:10%;
+    `;
+
+        fm.textContent = '🌙';
+
+        fm.addEventListener('click', () => {
+
+            if (secretFound) return;
+
+            moonClicked = true;
+
+            const msgs = [
+                'بس مش ده القمر الحقيقي دوري عليه كويس 👀',
+                'لا ده مش هو 😑 دوري تاني 🌙',
+                'حلوة بس دوري على التاني 😂'
+            ];
+
+            document.getElementById('mbox').textContent =
+                msgs[Math.min((fm._c = (fm._c || 0) + 1) - 1, msgs.length - 1)];
+
+            fm.style.transform = 'scale(.9)';
+
+            setTimeout(() => {
+                fm.style.transform = '';
+            }, 300);
         });
-        fm.addEventListener('touchend',e=>{e.preventDefault();fm.click();});
+
+        fm.addEventListener('touchend', e => {
+            e.preventDefault();
+            fm.click();
+        });
+
         n.appendChild(fm);
-        // clouds with مريم hidden in one
-        const positions=[
-            {top:'22%',left:'5%'},{top:'32%',left:'45%'},{top:'18%',left:'62%'},
-            {top:'45%',left:'18%'},{top:'55%',left:'55%'}
+
+        /* ☁️ CLOUDS */
+        const positions = [
+            { top: '22%', left: '5%' },
+            { top: '32%', left: '45%' },
+            { top: '18%', left: '62%' },
+            { top: '45%', left: '18%' },
+            { top: '55%', left: '55%' }
         ];
-        const secretIdx=Math.floor(Math.random()*positions.length);
-        positions.forEach(({top,left},idx)=>{
-            const wrap=document.createElement('div');
-            wrap.className='cloud-item';
-            wrap.style.cssText=`top:${top};left:${left};`;
-            const em=document.createElement('span');em.className='c-emoji';em.textContent='☁️';
+
+        const secretIdx = Math.floor(Math.random() * positions.length);
+
+        positions.forEach(({ top, left }, idx) => {
+
+            const wrap = document.createElement('div');
+
+            wrap.className = 'cloud-item';
+
+            wrap.style.cssText = `
+            top:${top};
+            left:${left};
+        `;
+
+            const em = document.createElement('span');
+
+            em.className = 'c-emoji';
+
+            em.textContent = '☁️';
+
             wrap.appendChild(em);
-            if(idx===secretIdx){
-                secretCloudEl=wrap;
-                const nm=document.createElement('div');nm.className='secret-name';nm.textContent='مريم ✨';
+
+            /* ✨ SECRET CLOUD */
+            if (idx === secretIdx) {
+
+                secretCloudEl = wrap;
+
+                const nm = document.createElement('div');
+
+                nm.className = 'secret-name';
+
+                nm.textContent = 'مريم ✨';
+
+                nm.style.cursor = 'pointer';
+                nm.style.zIndex = '999';
+                nm.style.pointerEvents = 'auto';
+
                 wrap.appendChild(nm);
-                wrap.addEventListener('click',revealCloud);
-                wrap.addEventListener('touchend',e=>{e.preventDefault();revealCloud();});
-            } else {
-                // non-secret: clicking bumps them slightly
-                wrap.addEventListener('click',()=>{
-                    em.style.transition='transform .3s';em.style.transform='translate(-10px,-20px) scale(.8)';
-                    setTimeout(()=>{em.style.transform='';},500);
-                    const r=['دي مش هي 😑','ورا غير كده 🙄','لا هنا لا 😂','جربي السحابة التانية'];
-                    document.getElementById('msub').textContent=r[Math.floor(Math.random()*r.length)];
+
+                wrap.addEventListener('click', revealCloud);
+
+                wrap.addEventListener('touchend', e => {
+                    e.preventDefault();
+                    revealCloud();
                 });
-                wrap.addEventListener('touchend',e=>{e.preventDefault();wrap.click();});
+
             }
+
+            /* ❌ NORMAL CLOUDS */
+            else {
+
+                wrap.addEventListener('click', () => {
+
+                    em.style.transition = 'transform .3s';
+
+                    em.style.transform =
+                        'translate(-10px,-20px) scale(.8)';
+
+                    setTimeout(() => {
+                        em.style.transform = '';
+                    }, 500);
+
+                    const r = [
+                        'دي مش هي 😑',
+                        'ورا غير كده 🙄',
+                        'لا هنا لا 😂',
+                        'جربي السحابة التانية'
+                    ];
+
+                    document.getElementById('msub').textContent =
+                        r[Math.floor(Math.random() * r.length)];
+                });
+
+                wrap.addEventListener('touchend', e => {
+                    e.preventDefault();
+                    wrap.click();
+                });
+            }
+
             n.appendChild(wrap);
         });
     }
-    function revealCloud(){
-        if(secretFound||!secretCloudEl)return;
+
+    /* 🌙 REVEAL SECRET CLOUD */
+
+    function revealCloud() {
+
+        if (secretFound || !secretCloudEl) return;
+
         secretCloudEl.classList.add('sliding');
-        document.getElementById('mbox').textContent='لاقيتيه! دوسي على اسمك 💕';
-        setTimeout(()=>{
+
+        document.getElementById('mbox').textContent =
+            'لاقيتيه! دوسي على اسمك 💕';
+
+        setTimeout(() => {
+
             secretCloudEl.classList.add('open');
-            const nm=secretCloudEl.querySelector('.secret-name');
-            nm.addEventListener('click',()=>{if(secretFound)return;secretFound=true;playOk();setTimeout(()=>showSov('ايوه كده شطورة! ❤️\nده هو القمر الحقيقي 🌙\nبس برضو مش أجمل منك 😍',6),200);});
-            nm.addEventListener('touchend',e=>{e.preventDefault();nm.click();});
-        },600);
+
+            const nm =
+                secretCloudEl.querySelector('.secret-name');
+
+            nm.onclick = () => {
+
+                if (secretFound) return;
+
+                secretFound = true;
+
+                playOk();
+
+                document.getElementById('mbox').textContent =
+                    'ايوه كده شطورة ❤️';
+
+                setTimeout(() => {
+
+                    showSov(
+                        `ايوه كده شطورة! ❤️
+ده هو القمر الحقيقي 🌙
+ `,
+                        6
+                    );
+
+                }, 300);
+            };
+
+            nm.addEventListener('touchend', e => {
+                e.preventDefault();
+                nm.click();
+            });
+
+        }, 600);
     }
-    function moonHint(){
-        hintUsed=true;document.getElementById('mhint').style.display='none';
-        document.getElementById('msub').textContent='السحابة بتاعتك أكبر شوية من غيرها 🤫';
-        if(secretCloudEl){
-            const em=secretCloudEl.querySelector('.c-emoji');
-            em.style.fontSize='clamp(70px,20vw,100px)';
-            setTimeout(()=>em.style.fontSize='',2000);
+
+    /* 💡 HINT */
+
+    function moonHint() {
+
+        hintUsed = true;
+
+        document.getElementById('mhint').style.display = 'none';
+
+        document.getElementById('msub').textContent =
+            'السحابة بتاعتك أكبر شوية من غيرها 🤫';
+
+        if (secretCloudEl) {
+
+            const em =
+                secretCloudEl.querySelector('.c-emoji');
+
+            em.style.fontSize =
+                'clamp(70px,20vw,100px)';
+
+            setTimeout(() => {
+                em.style.fontSize = '';
+            }, 2000);
         }
     }
 
